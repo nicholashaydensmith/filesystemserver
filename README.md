@@ -1,17 +1,17 @@
-# fsserver (File System Server)
+# filesystemserver / `fss`
 
-`fsserver` is a python package, out of the box is just `python3 -m http.server 8080`, but its superpower is its extensible plugin system.
+`filesystemserver` is a python package, out of the box is just `python3 -m http.server 8080`, but its superpower is its extensible plugin system.
 
-`fsserver` plugins can be loaded on the fly (or automatically) to serve your file system files/directories as rich content, some examples might include:
+`filesystemserver` plugins can be loaded on the fly (or automatically) to serve your file system files/directories as rich content, some examples might include:
 - Serving a directory full of images as an image gallery
 - Serving data stored in json or csv files as a chart or interactive visualization
 - Serving a directory containing git repo with Monaco code editor
 
-`fsserver` installs a CLI wrapper called `fss`.
+`filesystemserver` installs a CLI wrapper called `fss`.
 
 ## Install
 ```bash
-pip install fsserver
+pip install filesystemserver
 ```
 
 ## Usage
@@ -49,6 +49,6 @@ fss update
 
 ## Development
 
-`fsserver` itself strives to be as small and simple as possible, leaving all features and extensibility to plugins.
+`filesystemserver` itself strives to be as small and simple as possible, leaving all features and extensibility to plugins.
 
 It also strives to have as few dependencies as possible, currently its only dependency requirement is for python pre 3.11 package `tomli`.

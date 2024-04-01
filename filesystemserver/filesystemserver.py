@@ -257,7 +257,7 @@ def setup_defaults_and_environment(args):
             setattr(args, k, v)
     os.makedirs(args.plugin_dir, exist_ok=True)
     args.directory = os.path.realpath(args.directory)
-    with importlib.resources.path("fsserver", "data") as data:
+    with importlib.resources.path("filesystemserver", "data") as data:
         args.builtin_plugin_dir = os.path.join(data, "plugin")
     return args
 

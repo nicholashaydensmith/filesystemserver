@@ -1,5 +1,5 @@
 [project]
-name = "fsserver"
+name = "filesystemserver"
 dynamic = ["version"]
 authors = [
   { name="Nicholas Smith", email="thesmithdynasty@gmail.com" },
@@ -19,18 +19,18 @@ dependencies = [
 ]
 
 [project.scripts]
-fss = "fsserver:main"
+fss = "filesystemserver:main"
 
 [project.urls]
-Homepage = "https://github.com/nicholashaydensmith/fsserver"
-Issues = "https://github.com/nicholashaydensmith/fsserver/issues"
+Homepage = "https://github.com/nicholashaydensmith/filesystemserver"
+Issues = "https://github.com/nicholashaydensmith/filesystemserver/issues"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["fsserver"]
+packages = ["filesystemserver"]
 
 [tool.hatch.version]
-path = "fsserver/__init__.py"
+path = "filesystemserver/__init__.py"
