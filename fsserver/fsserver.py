@@ -7,6 +7,7 @@ import json
 import mimetypes
 import os
 import shutil
+import subprocess
 import sys
 import urllib.parse
 
@@ -19,12 +20,64 @@ else:
     import tomllib as toml
 
 
+def resolve_git_repo(url):
+    if not url.startswith("http"):
+        url = f"https://github.com/{url}"
+    plugin_dir = "/".join(url.split("/")[-2:])
+    return url, plugin_dir
+
+
+def installed_plugins(plugin_dir):
+    index = "index.html"
+    prefix_len = len(plugin_dir) + 1
+    postfix_len = len(index) + 1
+    return sorted(
+        [
+            m[prefix_len:-postfix_len]
+            for m in glob.glob(f"{plugin_dir}/**/{index}", recursive=True)
+        ]
+    )
+
+
+def git(*args, cwd=None, help_message=""):
+    assert cwd is not None
+    try:
+        subprocess.run(["git", "-C", cwd, *args], check=True)
+    except FileNotFoundError:
+        print(
+            "Error: git command not found, git is required for plugin install / update",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    except subprocess.CalledProcessError:
+        print(f"Error: {help_message}", file=sys.stderr)
+        sys.exit(1)
+
+
 def install(args):
-    print(args)
+    repo, plugin_dir = resolve_git_repo(args.plugin)
+    git(
+        "clone",
+        repo,
+        plugin_dir,
+        cwd=args.plugin_dir,
+        help_message="Perhaps the plugin specified is already installed, did you mean to run `update`?",
+    )
+    print("Succesfully installed:", plugin_dir)
 
 
 def update(args):
-    print(args)
+    plugins = (
+        args.plugins if len(args.plugins) > 0 else installed_plugins(args.plugin_dir)
+    )
+    for plugin in plugins:
+        repo, plugin_dir = resolve_git_repo(plugin)
+        git(
+            "pull",
+            cwd=os.path.join(args.plugin_dir, plugin_dir),
+            help_message="Perhaps the plugin isn't already installed, did you mean to run `install`?",
+        )
+        print("Succesfully updated:", plugin_dir)
 
 
 def serve(args):
@@ -95,16 +148,7 @@ def serve(args):
             index = "index.html"
             prefix_len = len(args.plugin_dir) + 1
             postfix_len = len(index) + 1
-            return {
-                "plugins": sorted(
-                    [
-                        m[prefix_len:-postfix_len]
-                        for m in glob.glob(
-                            f"{args.plugin_dir}/**/{index}", recursive=True
-                        )
-                    ]
-                )
-            }
+            return {"plugins": installed_plugins(args.plugin_dir)}
 
         def plugin_handler(self, plugin_path):
             base_plugin_dir = (
@@ -255,8 +299,8 @@ def main():
     )
     update_parser.set_defaults(func=update)
     update_parser.add_argument(
-        "plugin",
-        nargs="?",
+        "plugins",
+        nargs="*",
         help="plugin(s) to update",
     )
 
