@@ -26,8 +26,9 @@ const fss = {
       .catch(error_handler);
   },
 
-  download: (url, callback, kind = "text") => {
-    fetch_text(`?download=${url}`)
+  download: (url, callback) => {
+    const fetch_fn = url.endsWith(".json") ? fetch_json : fetch_text;
+    fetch_fn(`?download=${url}`)
       .then(callback)
       .catch(error_handler);
   },
