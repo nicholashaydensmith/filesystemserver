@@ -77,9 +77,17 @@ def update(args):
     )
     for plugin in plugins:
         repo, plugin_dir = resolve_git_repo(plugin["directory"])
+        cwd = os.path.join(args.plugin_dir, plugin_dir)
+        if not os.path.exists(os.path.join(cwd, ".git")):
+            print(
+                "Warning: plugin is not git repo, skipping:",
+                plugin_dir,
+                file=sys.stderr,
+            )
+            continue
         git(
             "pull",
-            cwd=os.path.join(args.plugin_dir, plugin_dir),
+            cwd=cwd,
             help_message="Perhaps the plugin isn't already installed, did you mean to run `install`?",
         )
         print("Succesfully updated:", plugin_dir)
