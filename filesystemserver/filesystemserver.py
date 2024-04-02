@@ -112,6 +112,10 @@ def serve(args):
                 return self.send_error(
                     http.server.HTTPStatus.NOT_FOUND, f"File not found {path}"
                 )
+            if os.path.isdir(path):
+                return self.send_error(
+                    http.server.HTTPStatus.BAD_REQUEST, f"File attempting to open is directory {path}"
+                )
             ctype, encoding = mimetypes.guess_type(path)
             if ctype is None:
                 ctype = "application/octet-stream"
@@ -206,6 +210,8 @@ def serve(args):
             if plugin_path == "/":
                 PluginRequestHandler.cwd = "/"
                 return self.redirect("fss/browser/")
+            elif not req.query:
+                return self.redirect(plugin_path + f"?cwd={PluginRequestHandler.cwd}")
             else:
                 return self.plugin_handler(plugin_path)
 
