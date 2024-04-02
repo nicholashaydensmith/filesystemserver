@@ -41,11 +41,26 @@ fss update
 
 ## `fss` Configuration
 
+`fss` is configured via toml `~/.config/fss/config.toml` and has the following options:
+```toml
+address = "localhost"
+port = 8080
+default_plugin = "fss/browser"
+```
+
 ## Developing a Plugin
+
+The simplest possible plugin is just a git project with an `index.html` file.  Plugins are installed into `~/.config/fss/plugin`.
 
 ### `index.html`
 
+### JavaScript API
+
 ### `fss.toml`
+
+### Examples
+- https://github.com/nicholashaydensmith/gallery.fss
+- https://github.com/nicholashaydensmith/highlight.fss
 
 ## Development
 

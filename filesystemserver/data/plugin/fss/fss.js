@@ -1,4 +1,4 @@
-let fss = (() => {
+export let fss = (() => {
   class FSSError extends Error {
     constructor(message) {
       super(message);
@@ -50,3 +50,5 @@ let fss = (() => {
     with_data: with_data,
   };
 })();
+
+export default fss;

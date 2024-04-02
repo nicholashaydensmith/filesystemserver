@@ -31,12 +31,17 @@ def installed_plugins(plugin_dir):
     index = "index.html"
     prefix_len = len(plugin_dir) + 1
     postfix_len = len(index) + 1
-    return sorted(
-        [
-            m[prefix_len:-postfix_len]
-            for m in glob.glob(f"{plugin_dir}/**/{index}", recursive=True)
-        ]
-    )
+    plugins = []
+    for m in glob.glob(f"{plugin_dir}/**/{index}", recursive=True):
+        directory = m[prefix_len:-postfix_len]
+        plugin = {"name": directory}
+        config_path = os.path.join(plugin_dir, directory, "fss.toml")
+        if os.path.exists(config_path):
+            with open(config_path, "rb") as fd:
+                plugin.update(toml.load(fd))
+        plugin["directory"] = directory
+        plugins.append(plugin)
+    return sorted(plugins, key=lambda m: m["name"])
 
 
 def git(*args, cwd=None, help_message=""):
@@ -71,7 +76,7 @@ def update(args):
         args.plugins if len(args.plugins) > 0 else installed_plugins(args.plugin_dir)
     )
     for plugin in plugins:
-        repo, plugin_dir = resolve_git_repo(plugin)
+        repo, plugin_dir = resolve_git_repo(plugin["directory"])
         git(
             "pull",
             cwd=os.path.join(args.plugin_dir, plugin_dir),
@@ -114,7 +119,8 @@ def serve(args):
                 )
             if os.path.isdir(path):
                 return self.send_error(
-                    http.server.HTTPStatus.BAD_REQUEST, f"File attempting to open is directory {path}"
+                    http.server.HTTPStatus.BAD_REQUEST,
+                    f"File attempting to open is directory {path}",
                 )
             ctype, encoding = mimetypes.guess_type(path)
             if ctype is None:
@@ -209,7 +215,7 @@ def serve(args):
 
             if plugin_path == "/":
                 PluginRequestHandler.cwd = "/"
-                return self.redirect("fss/browser/")
+                return self.redirect(args.default_plugin + "/")
             elif not req.query:
                 return self.redirect(plugin_path + f"?cwd={PluginRequestHandler.cwd}")
             else:
@@ -241,7 +247,7 @@ def get_default_config():
     return {
         "address": "localhost",
         "port": 8080,
-        "default_plugin": None,
+        "default_plugin": "fss/browser",
     }
 
 
@@ -334,6 +340,11 @@ def main():
         "--directory",
         default=".",
         help="Root directory to serve",
+    )
+    serve_parser.add_argument(
+        "--default-plugin",
+        default=None,
+        help="Default plugin to launch with, default (fss/browser)",
     )
 
     args = setup_defaults_and_environment(parser.parse_args())

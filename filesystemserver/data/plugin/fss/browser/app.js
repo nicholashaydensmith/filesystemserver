@@ -1,3 +1,7 @@
+import fss from "/fss/fss.js";
+
+fss.query(app_main);
+
 function app_main(data) {
   console.log(data);
   const dirlist = data["list"];
@@ -21,7 +25,7 @@ function app_main(data) {
     e.addEventListener("mouseover", (i) => {
       const rect = i.target.getBoundingClientRect();
       const plugin_list = plugins.length > 0
-        ? plugins.map(p => `<li><a href="/${p}?cwd=${root}${i.target.id === "" ? "" : dirlist.paths.at(i.target.id)}">${p}</a></li>`).join("")
+        ? plugins.map(p => `<li><a href="/${p["directory"]}?cwd=${root}${i.target.id === "" ? "" : dirlist.paths.at(i.target.id)}">${p["name"]}</a></li>`).join("")
         : "<em>No plugins installed</em>";
       plugin_container.style.display = "block";
       plugin_container.style.left = rect.right + "px";

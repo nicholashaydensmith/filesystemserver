@@ -3,49 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>FSS Browser</title>
-    <style>
-span.nav {
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  cursor: default;
-  color: LightGray;
-}
-
-span.nav:hover { color: black; }
-
-h1 {
-  margin-left: 20px;
-  position: sticky;
-  top: 0;
-  background-color: white;
-}
-
-a {
-  text-decoration: none;
-  color: #1560bd;
-}
-
-a:hover {
-  color: #2c3968;
-}
-
-a:visited {
-  color: #1560bd;
-}
-
-#plugin_container {
-  display: none;
-  position: fixed;
-  list-style-type: none;
-  background-color: white;
-}
-    </style>
-    <script src="/fss/fss.js"></script>
-    <script src="app.js"></script>
-    <script>
-    fss.query(app_main);
-    </script>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" type="module"></script>
 </head>
 <body>
 <div id="container"></div>
