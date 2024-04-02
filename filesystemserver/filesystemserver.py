@@ -20,14 +20,14 @@ else:
     import tomllib as toml
 
 
-def resolve_git_repo(url):
+def resolve_git_repo(url, ssh=False):
     if (
         not url.startswith("http")
         and not url.startswith("ssh")
         and not url.startswith("git@")
     ):
-        url = f"https://github.com/{url}"
-    plugin_dir = "/".join(url.split("/")[-2:])
+        url = f"git@github.com:{url}.git" if ssh else f"https://github.com/{url}"
+    plugin_dir = "/".join(url.split(":")[-1].split("/")[-2:]).strip(".git")
     return url, plugin_dir
 
 
@@ -64,7 +64,7 @@ def git(*args, cwd=None, help_message=""):
 
 
 def install(args):
-    repo, plugin_dir = resolve_git_repo(args.plugin)
+    repo, plugin_dir = resolve_git_repo(args.plugin, ssh=args.ssh)
     git(
         "clone",
         repo,
@@ -313,6 +313,11 @@ def main():
     - or full git URL `https://github.com/nicholashaydensmith/gallery.fss.git`""",
     )
     install_parser.set_defaults(func=install)
+    install_parser.add_argument(
+        "--ssh",
+        action="store_true",
+        help="Clone via ssh",
+    )
     install_parser.add_argument(
         "plugin",
         help="plugin to install",
