@@ -21,7 +21,11 @@ else:
 
 
 def resolve_git_repo(url):
-    if not url.startswith("http"):
+    if (
+        not url.startswith("http")
+        and not url.startswith("ssh")
+        and not url.startswith("git@")
+    ):
         url = f"https://github.com/{url}"
     plugin_dir = "/".join(url.split("/")[-2:])
     return url, plugin_dir
