@@ -41,7 +41,7 @@ export let fss = (() => {
   const with_data = (callback, as_fn = undefined) => {
     query(q => {
       download(q["list"].root, callback, as_fn);
-    }, queries = ["list"]);
+    }, ["list"]);
   };
 
   return {
